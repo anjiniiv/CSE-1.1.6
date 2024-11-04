@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This or That Food Game</title>
+    <style>
+        body {
+            font-family: snell Roundhand, cursive;
+            text-align: center;
+            margin: 20px;
+            background-color: #dfc5fe; /* Light purple background */
+        }
+        button {
+            padding: 50px 180px;
+            font-family: snell Roundhand, cursive;
+            margin: 50px;
+            border-radius: 12px;
+            font-size: 34px;
+            background-color: #af69ee; /* Purple button color */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s; /* Added transition */
+        }
+        button:hover {
+            background-color: #8a00c2; /* Darker purple on hover */
+            transform: scale(1.05); /* Slight scale effect on hover */
+        }
+        img {
+            max-width: 100px; /* Set max-width for images */
+            margin: 10px;
+            opacity: 0.7; /* Slight opacity for aesthetic */
+            transition: opacity 0.3s; /* Added transition for opacity */
+        }
+        img:hover {
+            opacity: 1; /* Full opacity on hover */
+        }
+    </style>
+</head>
+<body>
+
+<h1>This or That: Food Edition</h1>
+<div id="game">
+    <h2 id="question"></h2>
+    <button id="option1" onclick="chooseOption(1)"></button>
+    <button id="option2" onclick="chooseOption(2)"></button>
+</div>
+<h2 id="result"></h2>
+<img src="carrot.png" alt="">
+<img src="berry.png" alt="">
+<img src="boba.png" alt="">
+<img src="cereal.png" alt="">
+<img src="eggplant.png" alt="">
+<img src="mochi.png" alt="">
+<img src="ice cream cone.png" alt="">
+<img src="ice cream.png" alt="">
+<div id="replay" style="display: none;">
+    <button onclick="playAgain()">Play Again</button>
+</div>
+<script>
+    const foodPairs = [
+        "Popcorn",
+        "Potato Chips",
+        "Ice Cream",
+        "Cake",
+        "Takis",
+        "Cheetos",
+        "Fries",
+        "Pringles",
+        "Oreos",
+        "Twix",
+        "M&Ms",
+        "Hersheys",
+        "Skittles",
+        "Starbursts",
+        "Cupcakes",
+        "Muffins"
+    ];
+
+    let previousChoice = null;
+    let favorites = {};
+
+    function loadQuestion() {
+        if (foodPairs.length > 0) {
+            let option1 = previousChoice || foodPairs.pop();
+            let option2 = foodPairs.pop();
+
+            if (!option2) {
+                endGame();
+                return;
+            }
+
+            document.getElementById("question").innerText = "Which do you prefer?";
+            document.getElementById("option1").innerText = option1;
+            document.getElementById("option2").innerText = option2;
+
+            // Store options in favorites
+            favorites[option1] = (favorites[option1] || 0);
+            favorites[option2] = (favorites[option2] || 0);
+        } else {
+            endGame();
+        }
+    }
+
+    function chooseOption(option) {
+        previousChoice = option === 1 ? document.getElementById("option1").innerText : document.getElementById("option2").innerText;
+        favorites[previousChoice]++;
+
+        document.getElementById("result").innerText = `You chose: ${previousChoice}`;
+        setTimeout(loadQuestion, 500); // Load the next question after 0.5 seconds
+    }
+
+    function endGame() {
+        document.getElementById("game").innerHTML = "<h2>Thanks for playing!</h2>";
+        displayFavorites();
+        document.getElementById("replay").style.display = "block"; // Show replay button
+    }
+
+    function displayFavorites() {
+        const sortedFavorites = Object.entries(favorites).sort((a, b) => b[1] - a[1]);
+        let favoritesList = "<h3>Your Favorites:</h3><ul>";
+        sortedFavorites.forEach(([food, count]) => {
+            favoritesList += `<li>${food}: ${count} votes</li>`;
+        });
+        favoritesList += "</ul>";
+        document.body.innerHTML += favoritesList;
+    }
+
+    function playAgain() {
+        location.reload(); // Refresh the page to restart the game
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
